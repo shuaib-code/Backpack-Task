@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Pages Content Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .problem-title {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 1.875rem;
+        font-weight: 500;
+      }
+      .problem-description {
+        color: #34495e;
+        margin-bottom: 20px;
+        line-height: 1.75;
+      }
+      .code-block {
+        background-color: #f0f0f0;
+        border: 1px solid #e0e0e0;
+        padding: 15px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+        border-radius: 0.375rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+      .solution-explanation {
+        color: #3498db;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+      #dynamic-content h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        margin-top: 2rem;
+      }
+      #dynamic-content p {
+        color: #4b5563;
+        margin-bottom: 1rem;
+        line-height: 1.75;
+      }
+      #dynamic-content ul {
+        list-style-type: disc;
+        padding-left: 2rem;
+        margin-bottom: 1rem;
+      }
+      #dynamic-content li {
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container bg-white rounded-lg shadow-md mt-10 p-6">
+      <header class="text-center mb-8">
+        <h1 class="text-3xl font-semibold text-indigo-600">
+          JavaScript Problem Solutions
+        </h1>
+        <p class="text-gray-600 mt-2">
+          Solutions and explanations for common JavaScript problems.
+        </p>
+      </header>
+      <main
+        id="dynamic-content"
+        class="prose prose-base sm:prose-lg lg:prose-xl mx-auto"
+      >
+        <section class="loading-section">
+          <p>Loading content, please wait...</p>
+        </section>
+      </main>
+    </div>
+    <script>
+      const dynamicContent = document.getElementById("dynamic-content");
+      const githubRepo = "shuaib-code/Backpack-Task";
+      const branch = "main";
+
+      // Function to fetch content from GitHub
+      async function fetchGitHubContent(filePath) {
+        const url = `https://api.github.com/repos/${githubRepo}/contents/${filePath}?ref=${branch}`;
+        console.log(url);
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch ${filePath}: ${response.status} ${response.statusText}`
+            );
+          }
+          const data = await response.json();
+          const content = atob(data.content);
+          return content;
+        } catch (error) {
+          console.error("Error fetching content:", error);
+          dynamicContent.innerHTML = `<p class="text-red-500">Failed to load content: ${error.message}</p>`;
+          return null;
+        }
+      }
+
+      // Function to create a problem section from JS file content
+      function createProblemSectionFromJS(fileContent, fileName) {
+        const section = document.createElement("section");
+        section.classList.add("problem-section");
+
+        const title = fileName
+          .replace(".js", "")
+          .replace(/task/i, "Task ")
+          .replace(/([A-Z])/g, " $1")
+          .trim();
+        const titleElement = document.createElement("h2");
+        titleElement.classList.add("problem-title");
+        titleElement.textContent = title;
+
+        const description = document.createElement("p");
+        description.classList.add("problem-description");
+        description.textContent = `Solution for ${title}.  See the code and explanation below.`;
+
+        const codeBlock = document.createElement("div");
+        codeBlock.classList.add("code-block");
+        codeBlock.innerHTML = `<pre><code class="language-javascript">${
+          hljs.highlight(fileContent, { language: "javascript" }).value
+        }</code></pre>`;
+
+        const explanation = document.createElement("p");
+        explanation.classList.add("solution-explanation");
+        explanation.textContent = "See the JavaScript code for the solution.";
+
+        section.appendChild(titleElement);
+        section.appendChild(description);
+        section.appendChild(codeBlock);
+        section.appendChild(explanation);
+        return section;
+      }
+
+      // Function to render markdown content
+      function renderMarkdown(markdownText) {
+        // Basic Markdown conversion (for demonstration purposes) - consider using a library like 'marked'
+        const html = markdownText
+          .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+          .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+          .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+          .replace(/\*\*(.*)\*\*/gim, "<b>$1</b>")
+          .replace(/\*(.*)\*/gim, "<i>$1</i>")
+          .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
+          .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2'>$1</a>")
+          .replace(/\n$/gim, "<br />")
+          .replace(/\n/gim, "<p></p>");
+
+        return html;
+      }
+
+      // Main function to load and display content
+      async function loadContent() {
+        dynamicContent.innerHTML = "<p>Loading content, please wait...</p>";
+
+        try {
+          // Fetch README.md
+          const readmeContent = await fetchGitHubContent("README.md");
+          if (readmeContent) {
+            const readmeSection = document.createElement("section");
+            readmeSection.innerHTML = renderMarkdown(readmeContent);
+            dynamicContent.appendChild(readmeSection);
+          }
+
+          // Fetch and display task files dynamically
+          const contentsUrl = `https://api.github.com/repos/${githubRepo}/contents?ref=${branch}`;
+          const contentsResponse = await fetch(contentsUrl);
+          if (!contentsResponse.ok) {
+            throw new Error(
+              `Failed to fetch repository contents: ${contentsResponse.status} ${contentsResponse.statusText}`
+            );
+          }
+          const contentsData = await contentsResponse.json();
+
+          for (const item of contentsData) {
+            if (
+              item.type === "file" &&
+              item.name.startsWith("task") &&
+              item.name.endsWith(".js")
+            ) {
+              const fileContent = await fetchGitHubContent(item.name);
+              if (fileContent) {
+                const problemSection = createProblemSectionFromJS(
+                  fileContent,
+                  item.name
+                );
+                dynamicContent.appendChild(problemSection);
+              }
+            }
+          }
+          dynamicContent.innerHTML += `<p>Content loaded from GitHub repository: ${githubRepo}, branch: ${branch}</p>`;
+        } catch (error) {
+          console.error("Error loading content:", error);
+          dynamicContent.innerHTML = `<p class="text-red-500">Failed to load content: ${error.message}</p>`;
+        }
+      }
+
+      // Load content when the page loads
+      document.addEventListener("DOMContentLoaded", loadContent);
+    </script>
+  </body>
+</html>
