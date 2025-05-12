@@ -1,21 +1,20 @@
-# 🚀 JavaScript Problem Solving Tasks
+# :rocket: JavaScript Problem Solving Tasks
 
 This repo contains JS solutions for problem-solving tasks.
 
 ---
 
-## 📋 Tasks
+## :clipboard: Tasks
 
-- ✅ **Array Filtering/Mapping:** [`task1.js`](./task1.js) – Filter out females and map remaining names
-- 📚 **Object Manipulation:** [`task2.js`](./task2.js) – Extract book titles
-- 🔧 **Function Composition:** [`task3.js`](./task3.js) – Compose square → double → add 5
-- 🚗 **Sorting Objects:** [`task4.js`](./task4.js) – Sort cars by year
-- ➕ **Array Reduction:** [`task5.js`](./task5.js) – Sum even numbers using reduce
+- :white_check_mark: **Array Filtering/Mapping:** [`task1.js`](./task1.js) – Filter out females and map remaining names  
+- :books: **Object Manipulation:** [`task2.js`](./task2.js) – Extract book titles  
+- :wrench: **Function Composition:** [`task3.js`](./task3.js) – Compose square → double → add 5  
+- :red_car: **Sorting Objects:** [`task4.js`](./task4.js) – Sort cars by year  
+- :heavy_plus_sign: **Array Reduction:** [`task5.js`](./task5.js) – Sum even numbers using reduce  
 
 ---
 
-## 🗂️ Structure
-
+## :card_index_dividers: Structure
 ```
 /
 |-- README.md
